@@ -4,19 +4,20 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "./useAuth";
 
 const Login = () => {
-    const { setIsAuthenticated, isAuthenticated } = useAuth();
-    const navigate = useNavigate();
+    const { isAuthenticated, login } = useAuth();
+    const navigate = useNavigate(); // This can be removed, as it's not used.
     const [form, setForm] = useState({
         email: "",
         password: ""
     });
     const [message, setMessage] = useState("");
 
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate("/home", { replace: true });
-        }
-    }, [isAuthenticated, navigate]);
+    // This useEffect is now redundant and should be removed.
+    // useEffect(() => {
+    //     if (isAuthenticated) {
+    //         navigate("/home", { replace: true });
+    //     }
+    // }, [isAuthenticated, navigate]);
 
     useEffect(() => {
         if (message) {
@@ -34,15 +35,17 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await api.post("auth/login", form);
+            const res = await api.post("auth/login", form);
+            const { token, user } = res.data;
+            login(token, user);
             setMessage("Login Successful Redirecting...");
-            setIsAuthenticated(true);
         } catch (err) {
             console.error(err);
             setMessage("Invalid Credentials try again");
         }
     };
 
+    // This check is now also handled by AuthRoutes and AdminRoute, but can stay for UX.
     if (isAuthenticated === null) {
         return <div>Loading...</div>;
     }
@@ -61,7 +64,6 @@ const Login = () => {
                 <br /><br />
                 <button type="submit">Login</button>
                 {message && <p>{message}</p>}
-
             </form>
             <p>Not a User
                 <br></br>

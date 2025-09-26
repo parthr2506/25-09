@@ -1,30 +1,55 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Register from './Register';
 import Login from './Login';
-import Dashboard from './Dashboard';
-// import CreatePost from './CreatePost';
 import ProtectedRoute from './ProtectedRoute';
 import PublicRoute from './PublicRoute';
-// import EditPost from './EditPost';
+import AdminRoute from './AdminRoute';
 import { useAuth } from './useAuth';
+import Products from './Products';
+import Cart from './Cart';
+import AdminDashboard from './AdminDashboard';
+import Unauthorized from './Unauthorized';
 
 const AuthRoutes = () => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user, isLoading } = useAuth();
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    const isAdmin = user?.role === "SELLER";
+
+    const handleInitialRedirect = () => {
+        if (!isAuthenticated) {
+            return <Navigate to="/login" replace />;
+        }
+        if (isAdmin) {
+            return <Navigate to="/admin" replace />;
+        }
+        return <Navigate to="/home" replace />;
+    };
+
     return (
         <Routes>
+            <Route path="/" element={handleInitialRedirect()} />
+
             <Route element={<PublicRoute />}>
-                <Route path="/" element={<Register />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
             </Route>
+
             <Route element={<ProtectedRoute />}>
-                <Route path="/home" element={<Dashboard />} />
-                {/* <Route path="/create-post" element={<CreatePost />} />
-                <Route path="/edit-post/:id" element={<EditPost />} /> */}
+                <Route path="/home" element={<Products />} />
+                <Route path="/cart" element={<Cart />} />
             </Route>
-            <Route
-                path="*"
-                element={isAuthenticated ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />}
-            />
+
+            <Route element={<AdminRoute />}>
+                <Route path="/admin" element={<AdminDashboard />} />
+            </Route>
+
+            <Route path="/unauthorized-page" element={<Unauthorized />} />
+
+            <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
     );
 };

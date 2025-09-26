@@ -33,51 +33,71 @@ router.post('/add', auth, async (req, res) => {
     const { productId, quantity = 1 } = req.body;
 
     try {
-        let userCart = await prisma.cart.findFirst({
-            where: { userId: req.user.id }
-        });
-
-        if (!userCart) {
-            userCart = await prisma.cart.create({
-                data: { userId: req.user.id }
+        await prisma.$transaction(async (tx) => {
+            // Find the product and check its stock
+            const product = await tx.product.findUnique({
+                where: { id: productId },
             });
-        }
 
-        const existingItem = await prisma.cartItem.findFirst({
-            where: {
-                cartId: userCart.id,
-                productId
+            if (!product || product.stock < quantity) {
+                return res.status(400).json({ error: 'Not enough stock for this product.' });
+            }
+
+            // Decrement the product's stock
+            await tx.product.update({
+                where: { id: productId },
+                data: {
+                    stock: {
+                        decrement: quantity,
+                    },
+                },
+            });
+
+            let userCart = await tx.cart.findFirst({
+                where: { userId: req.user.id },
+            });
+
+            if (!userCart) {
+                userCart = await tx.cart.create({
+                    data: { userId: req.user.id },
+                });
+            }
+
+            const existingItem = await tx.cartItem.findFirst({
+                where: {
+                    cartId: userCart.id,
+                    productId,
+                },
+            });
+
+            if (existingItem) {
+                await tx.cartItem.update({
+                    where: { id: existingItem.id },
+                    data: { quantity: { increment: quantity } },
+                });
+            } else {
+                await tx.cartItem.create({
+                    data: {
+                        cartId: userCart.id,
+                        productId,
+                        quantity,
+                    },
+                });
             }
         });
 
-        if (existingItem) {
-            const updatedItem = await prisma.cartItem.update({
-                where: { id: existingItem.id },
-                data: { quantity: existingItem.quantity + Number(quantity) }
-            });
-            return res.json(updatedItem);
-        } else {
-            const newItem = await prisma.cartItem.create({
-                data: {
-                    cartId: userCart.id,
-                    productId,
-                    quantity: Number(quantity)
-                }
-            });
-            return res.json(newItem);
-        }
+        res.status(200).json({ message: 'Item added to cart successfully.' });
     } catch (error) {
-        console.error("Error adding item to cart:", error);
-        res.status(500).json({ error: 'Failed to add item to cart' });
+        console.error("Error adding item to cart and updating stock:", error);
+        res.status(500).json({ error: 'Failed to add item to cart.' });
     }
 });
-
-router.post('/remove', auth, async (req, res) => {
-    const { cartItemId } = req.body;
+router.post('/delete', auth, async (req, res) => {
+    const { id } = req.body;
 
     try {
         const cartItem = await prisma.cartItem.findUnique({
-            where: { id: cartItemId },
+            where: { id },
             include: { cart: true }
         });
 
@@ -85,7 +105,7 @@ router.post('/remove', auth, async (req, res) => {
             return res.status(403).json({ error: 'Not authorized to remove this item' });
         }
 
-        await prisma.cartItem.delete({ where: { id: cartItemId } });
+        await prisma.cartItem.delete({ where: { id } });
         res.json({ message: 'Item removed successfully' });
     } catch (error) {
         if (error.code === 'P2025') {
