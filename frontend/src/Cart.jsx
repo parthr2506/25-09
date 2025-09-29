@@ -42,7 +42,7 @@ const Cart = () => {
             alert("Item Removed From Cart");
             updateCart()
         } catch (error) {
-            console.error("Error Removing the Items:", error);
+            console.error("Error while removing the Items:", error);
             alert("Error removing item. Please try again.");
             setItems(originalItems);
         }
@@ -75,6 +75,7 @@ const Cart = () => {
                             <p>Quantity: {item.quantity}</p>
                         </div>
                         <Button
+                            className='remove-btn'
                             variant="outlined"
                             color="error"
                             startIcon={<DeleteIcon />}

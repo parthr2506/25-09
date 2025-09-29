@@ -63,5 +63,20 @@ router.delete('/:id', auth, requireRole('SELLER'), async (req, res) => {
         res.status(500).json({ error: 'Cannot delete product' });
     }
 });
+router.put('/:id/stock', auth, async (req, res) => {
+    const { id } = req.params;
+    const { stock } = req.body
+    try {
+        const updatedProduct = await prisma.product.update({
+            where: { id },
+            data: { stock: Number(stock) }
+        })
+        res.status(200).json(updatedProduct)
+    } catch (error) {
+        console.log("error while updating product");
+        res.status(500).json({ error: "update product failed" })
+
+    }
+})
 
 module.exports = router;

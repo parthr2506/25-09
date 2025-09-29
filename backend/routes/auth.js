@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
         });
 
         if (!user) {
-            return res.status(400).json({ error: "Invalid credentials." });
+            return res.status(400).json({ error: "Invalid credentials" });
         }
 
         const match = await bcrypt.compare(password, user.password);
@@ -80,7 +80,7 @@ router.post('/login', async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ error: "An unexpected error occurred." });
+        return res.status(500).json({ error: "An unexpected error occurred" });
     }
 });
 

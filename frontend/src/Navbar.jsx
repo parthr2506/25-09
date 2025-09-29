@@ -19,7 +19,7 @@ const Navbar = () => {
     `;
 
     return (
-        <span className="navContainer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: "#af7effff" }}>
+        <span className="navContainer">
             <span className='logo'>Stop & Shop</span>
             <div>
                 <button onClick={logout}>Logout</button>

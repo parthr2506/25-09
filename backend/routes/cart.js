@@ -17,7 +17,6 @@ router.get('/', auth, async (req, res) => {
                 }
             }
         });
-
         if (!userCart) {
             return res.json([]);
         }
@@ -31,10 +30,10 @@ router.get('/', auth, async (req, res) => {
 
 router.post('/add', auth, async (req, res) => {
     const { productId, quantity = 1 } = req.body;
+    let updatedProduct;
 
     try {
         await prisma.$transaction(async (tx) => {
-            // Find the product and check its stock
             const product = await tx.product.findUnique({
                 where: { id: productId },
             });
@@ -43,8 +42,7 @@ router.post('/add', auth, async (req, res) => {
                 return res.status(400).json({ error: 'Not enough stock for this product.' });
             }
 
-            // Decrement the product's stock
-            await tx.product.update({
+            updatedProduct = await tx.product.update({
                 where: { id: productId },
                 data: {
                     stock: {
@@ -86,10 +84,10 @@ router.post('/add', auth, async (req, res) => {
             }
         });
 
-        res.status(200).json({ message: 'Item added to cart successfully.' });
+        res.status(200).json({ message: 'Item added to cart successfully', updatedProduct });
     } catch (error) {
-        console.error("Error adding item to cart and updating stock:", error);
-        res.status(500).json({ error: 'Failed to add item to cart.' });
+        console.error("Error while adding the item to cart", error);
+        res.status(500).json({ error: 'Failed to add item to cart' });
     }
 });
 router.post('/delete', auth, async (req, res) => {
@@ -104,7 +102,11 @@ router.post('/delete', auth, async (req, res) => {
         if (!cartItem || cartItem.cart.userId !== req.user.id) {
             return res.status(403).json({ error: 'Not authorized to remove this item' });
         }
+        await prisma.product.update({
+            where: { id: cartItem.productId },
+            data: { stock: { increment: cartItem.quantity } }
 
+        })
         await prisma.cartItem.delete({ where: { id } });
         res.json({ message: 'Item removed successfully' });
     } catch (error) {

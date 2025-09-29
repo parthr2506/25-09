@@ -1,6 +1,6 @@
-import React from 'react'
-import { useAuth } from './useAuth'
-import { Navigate, Outlet } from 'react-router-dom'
+import React from 'react';
+import { useAuth } from './useAuth';
+import { Navigate, Outlet } from 'react-router-dom';
 
 const AdminRoute = () => {
     const { isAuthenticated, user, isLoading } = useAuth();
@@ -9,17 +9,17 @@ const AdminRoute = () => {
         return <div>Loading...</div>;
     }
 
-    const isAdmin = user?.role === "SELLER"; // Assuming 'SELLER' is the admin role
+    const isAdmin = user?.role === "SELLER";
 
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
     }
 
-    if (!isAdmin) {
-        return <Navigate to="/home" replace />;
-    }
+    // if (!isAdmin) {
+    //     return <Navigate to="/unauthorized-page" replace />;
+    // }
 
     return <Outlet />;
-}
+};
 
 export default AdminRoute;

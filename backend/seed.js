@@ -19,9 +19,9 @@ async function main() {
                 role: 'SELLER'
             }
         });
-        console.log(`Admin created: ${adminEmail} / ${adminPassword}`);
+        // console.log(`Admin created: ${adminEmail} / ${adminPassword}`);
     } else {
-        console.log('Admin already exists');
+        // console.log('Admin already exists');
     }
 }
 

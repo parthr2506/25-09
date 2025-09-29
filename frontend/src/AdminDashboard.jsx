@@ -15,6 +15,7 @@ const AdminDashboard = () => {
         name: '',
         price: '',
         description: '',
+        stock: ''
     });
 
     const fetchData = async () => {
@@ -29,10 +30,9 @@ const AdminDashboard = () => {
             setProducts(productRes.data);
         } catch (err) {
             console.error('Error fetching data:', err);
-            // The API interceptor will handle the 401 Unauthorized globally.
-            // For other errors, we set an error message.
+
             if (err.response?.status !== 401 && err.response?.status !== 403) {
-                setError('Failed to fetch dashboard data. Please check your network or try again.');
+                setError('network error');
             }
         } finally {
             setLoading(false);
@@ -42,7 +42,6 @@ const AdminDashboard = () => {
     useEffect(() => {
         if (!authLoading) {
             if (!isAuthenticated || user?.role !== 'SELLER') {
-                // Assuming admin role is 'SELLER' based on your backend
                 navigate('/unauthorized-page', { replace: true });
             } else {
                 fetchData();
@@ -64,8 +63,8 @@ const AdminDashboard = () => {
                 name: newProductForm.name,
                 description: newProductForm.description,
                 price: Number(newProductForm.price),
-                stock: 1, // Assuming a default value
-                images: [], // Assuming an empty array for now
+                stock: Number(newProductForm.stock),
+                images: [],
             });
             alert('Product added successfully!');
             setNewProductForm({ name: '', price: '', description: '' });
@@ -82,8 +81,8 @@ const AdminDashboard = () => {
             alert(`User role changed to ${role}`);
             setUsers(users.map((u) => (u.id === userId ? { ...u, role } : u)));
         } catch (err) {
-            console.error('Failed to assign role:', err);
-            alert('Failed to assign role');
+            console.error('Failed to change role:', err);
+            alert('Failed to change role');
         }
     };
 
@@ -94,7 +93,7 @@ const AdminDashboard = () => {
                 alert('User deleted!');
                 setUsers(users.filter((u) => u.id !== id));
             } catch (err) {
-                console.error('Failed to delete user:', err);
+                console.error('Error while deleting user:', err);
                 alert('Failed to delete user');
             }
         }
@@ -112,7 +111,18 @@ const AdminDashboard = () => {
             }
         }
     };
+    const updateProduct = async (id, newStock) => {
+        if (newStock < 0) return;
+        try {
+            await api.put(`/products/${id}/stock`, { stock: newStock })
+            setProducts(products.map(p => (p.id == id ? { ...p, stock: newStock } : p)))
+        } catch (error) {
+            console.log("cannot update stock");
+            alert("stock update failed")
 
+        }
+
+    }
     if (authLoading || loading) {
         return <div>Loading dashboard...</div>;
     }
@@ -121,7 +131,6 @@ const AdminDashboard = () => {
         return <div style={{ color: 'red' }}>{error}</div>;
     }
 
-    // Authorization check to render only for authenticated 'SELLER' users
     if (!isAuthenticated || user?.role !== 'SELLER') {
         return <div>You are not authorized to view this page.</div>;
     }
@@ -131,32 +140,58 @@ const AdminDashboard = () => {
             <h2>Admin Dashboard</h2>
             <section>
                 <h3>Create Product</h3>
+                <label htmlFor="name">Product Name:</label>
+                <br />
                 <input
                     name="name"
+                    id="name"
                     placeholder="enter product name"
                     value={newProductForm.name}
                     onChange={handleProductFormChange}
                 />
+                <br /><br />
+                <label htmlFor="price">Price:</label>
+                <br />
                 <input
                     name="price"
+                    id="price"
                     placeholder="enter price"
                     value={newProductForm.price}
                     onChange={handleProductFormChange}
                 />
+                <br /><br />
+                <label htmlFor="description">Description:</label>
+                <br />
                 <input
                     name="description"
+                    id="description"
                     placeholder="enter product description"
                     value={newProductForm.description}
                     onChange={handleProductFormChange}
                 />
-                <button onClick={addProduct}>Add</button>
+                <br /><br />
+                <label htmlFor="stock">Stock:</label>
+                <br />
+                <input
+                    name="stock"
+                    id="stock"
+                    placeholder="enter quantity"
+                    value={newProductForm.stock}
+                    onChange={handleProductFormChange}
+                />
+                <br /><br />
+                <button className="btn" onClick={addProduct}>Add</button>
             </section>
             <section>
                 <h3>Products</h3>
                 {products.map(product => (
                     <div key={product.id} style={{ border: '1px solid #ddd', padding: 8, margin: 8 }}>
-                        <div>{product.name}---{product.price}</div>
-                        <button onClick={() => deleteProduct(product.id)}>Delete</button>
+                        <div>{product.name}</div>
+                        <div> Rs:{product.price}</div>
+                        <div>Qty:{product.stock}</div>
+                        <button style={{ margin: "10px" }} onClick={() => updateProduct(product.id, product.stock - 1)}>-</button>
+                        <button style={{ margin: "10px" }} onClick={() => updateProduct(product.id, product.stock + 1)}>+</button>
+                        <button style={{ margin: "10px" }} onClick={() => deleteProduct(product.id)}>Delete</button>
                     </div>
                 ))}
             </section>

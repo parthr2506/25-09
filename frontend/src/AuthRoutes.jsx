@@ -1,14 +1,16 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Register from './Register';
-import Login from './Login';
-import ProtectedRoute from './ProtectedRoute';
-import PublicRoute from './PublicRoute';
-import AdminRoute from './AdminRoute';
 import { useAuth } from './useAuth';
+import PublicRoute from './PublicRoute';
+import ProtectedRoute from './ProtectedRoute';
+import AdminRoute from './AdminRoute';
+import SidebarLayout from './SidebarLayout';
+import Login from './Login';
+import Register from './Register';
 import Products from './Products';
 import Cart from './Cart';
 import AdminDashboard from './AdminDashboard';
 import Unauthorized from './Unauthorized';
+
 
 const AuthRoutes = () => {
     const { isAuthenticated, user, isLoading } = useAuth();
@@ -19,19 +21,13 @@ const AuthRoutes = () => {
 
     const isAdmin = user?.role === "SELLER";
 
-    const handleInitialRedirect = () => {
-        if (!isAuthenticated) {
-            return <Navigate to="/login" replace />;
-        }
-        if (isAdmin) {
-            return <Navigate to="/admin" replace />;
-        }
-        return <Navigate to="/home" replace />;
-    };
-
     return (
         <Routes>
-            <Route path="/" element={handleInitialRedirect()} />
+            <Route path="/" element={
+                isAuthenticated
+                    ? (isAdmin ? <Navigate to="/admin" replace /> : <Navigate to="/home" replace />)
+                    : <Navigate to="/login" replace />
+            } />
 
             <Route element={<PublicRoute />}>
                 <Route path="/login" element={<Login />} />
@@ -39,17 +35,20 @@ const AuthRoutes = () => {
             </Route>
 
             <Route element={<ProtectedRoute />}>
-                <Route path="/home" element={<Products />} />
-                <Route path="/cart" element={<Cart />} />
+                <Route element={<SidebarLayout />}>
+                    <Route path="/home" element={<Products />} />
+                    <Route path="/cart" element={<Cart />} />
+
+                    <Route path="/admin" element={
+                        isAdmin
+                            ? <AdminDashboard />
+                            : <Navigate to="/unauthorized-page" replace />
+                    } />
+                </Route>
             </Route>
 
-            <Route element={<AdminRoute />}>
-                <Route path="/admin" element={<AdminDashboard />} />
-            </Route>
-
-            <Route path="/unauthorized-page" element={<Unauthorized />} />
-
-            <Route path="*" element={<div>404 Not Found</div>} />
+            {/* <Route path="/unauthorized-page" element={<Unauthorized />} /> */}
+            {/* <Route path="*" element={<div>Page not found </div>} /> */}
         </Routes>
     );
 };

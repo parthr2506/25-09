@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from './api';
 
 const AuthContext = createContext();
@@ -9,7 +9,6 @@ export const AuthProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
-    const location = useLocation();
     const [cartItems, setCartItems] = useState([]);
 
     const fetchCartItems = async () => {
@@ -24,6 +23,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (token, userData) => {
         localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
         setIsAuthenticated(true);
         await fetchCartItems();
@@ -33,11 +33,14 @@ export const AuthProvider = ({ children }) => {
             navigate("/home", { replace: true });
         }
     };
+
     const logout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setUser(null);
         setIsAuthenticated(false);
         setCartItems([]);
+        navigate("/login", { replace: true });
     };
 
     const updateCart = async () => {
@@ -46,9 +49,10 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const checkAuth = async () => {
-            setIsLoading(true);
             const token = localStorage.getItem('token');
-            if (!token) {
+            const storedUser = localStorage.getItem('user');
+
+            if (!token || !storedUser) {
                 setIsAuthenticated(false);
                 setUser(null);
                 setCartItems([]);
@@ -57,14 +61,16 @@ export const AuthProvider = ({ children }) => {
             }
 
             try {
-                const res = await api.get('/auth');
+
+                const userObject = JSON.parse(storedUser);
                 setIsAuthenticated(true);
-                setUser(res.data.user);
-                await fetchCartItems(); // Fetch cart only after successful auth
+                setUser(userObject);
+                await fetchCartItems();
             } catch (error) {
+
                 localStorage.removeItem('token');
+                localStorage.removeItem('user');
                 setIsAuthenticated(false);
-                setCartItems([]);
                 setUser(null);
             } finally {
                 setIsLoading(false);
