@@ -62,6 +62,7 @@ const Products = () => {
         }
         setOpenAlert(false);
     };
+
     return (
         <>
             <h2>Products</h2>
@@ -77,7 +78,7 @@ const Products = () => {
                 ))}
 
                 <Snackbar open={openAlert} autoHideDuration={800} onClose={handleCloseAlert} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-                    <MuiAlert onClose={handleCloseAlert} elevation={6} variant="filled">
+                    <MuiAlert onClose={handleCloseAlert} elevation={6} variant="filled" >
                         Product Added To The Cart
                     </MuiAlert>
                 </Snackbar>

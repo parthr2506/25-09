@@ -4,6 +4,7 @@ const prisma = require("../prisma/prismaClient")
 const auth = async (req, res, next) => {
     const header = req.headers.authorization
     if (!header) {
+        requireRole
         return res.status(401).json({ error: "No token found" })
     }
     const token = header.split(' ')[1]
@@ -20,7 +21,7 @@ const auth = async (req, res, next) => {
         req.user = user
         next()
     } catch (error) {
-        return res.status(401).json({ error: "Invalid Token" })
+        return res.status(401).json({ error: "Token is invalid" })
     }
 }
 

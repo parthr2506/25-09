@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import api from './api';
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "./useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const { isAuthenticated, login } = useAuth();
@@ -10,12 +11,13 @@ const Login = () => {
         password: ""
     });
     const [message, setMessage] = useState("");
+    const navigate = useNavigate()
 
-    // useEffect(() => {
-    //     if (isAuthenticated) {
-    //         navigate("/home", { replace: true });
-    //     }
-    // }, [isAuthenticated, navigate]);
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate("/home", { replace: true });
+        }
+    }, [isAuthenticated, navigate]);
 
     useEffect(() => {
         if (message) {
@@ -48,7 +50,7 @@ const Login = () => {
     }
 
     return (
-        <div className="form">
+        <div className="form-container">
             <form onSubmit={handleSubmit}>
                 <h2>Login</h2>
                 <label htmlFor="email">Email:</label>
@@ -61,13 +63,14 @@ const Login = () => {
                 <br /><br />
                 <button type="submit">Login</button>
                 {message && <p>{message}</p>}
+                <p>Not a User
+                    <br></br>
+                    <Link to='/register'>
+                        Signup
+                    </Link>
+                </p>
             </form>
-            <p>Not a User
-                <br></br>
-                <Link to='/register'>
-                    Signup
-                </Link>
-            </p>
+
         </div>
     );
 };

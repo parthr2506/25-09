@@ -2,8 +2,9 @@ const ProductCard = ({ p, onAdd, isAdding }) => {
     return (
         <div className="productCard">
             <h3>{p.name}</h3>
+            <img src={p.images[0]} alt={p.name} />
             <p >Rs: {p.price}</p>
-            <p>{p.description}</p>
+            <p className="description-text">{p.description}</p>
             <p>Stock:{p.stock}</p>
 
             <button className="Add-btn"

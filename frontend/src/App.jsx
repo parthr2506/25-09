@@ -4,7 +4,6 @@ import { AuthProvider } from './AuthContext';
 import { useAuth } from './useAuth';
 import AuthRoutes from './AuthRoutes';
 import Navbar from './Navbar';
-import React from 'react';
 
 const AppContent = () => {
   const { isAuthenticated, isLoading } = useAuth();

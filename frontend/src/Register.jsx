@@ -41,13 +41,9 @@ const Register = () => {
         return <div>Loading...</div>;
     }
     return (
-        <div className="form">
+        <div className="form-container">
             <form onSubmit={handleSubmit}>
                 <h2>SignUp</h2>
-                {/* <label htmlFor="name">Name:</label>
-                <br />
-                <input type="text" name="name" id="name" placeholder="name" value={formData.name} onChange={handleChange} required />
-                <br /><br /> */}
                 <label htmlFor="email">Email:</label>
                 <br />
                 <input type="email" name="email" id="email" placeholder="email" value={formData.email} onChange={handleChange} required />
@@ -60,13 +56,14 @@ const Register = () => {
 
                 <button type="submit">Submit</button>
                 {message && <p>{message}</p>}
+                <p>Already a user
+                    <br></br>
+                    <Link to='/login'>
+                        Login
+                    </Link>
+                </p>
             </form>
-            <p>Already a user
-                <br></br>
-                <Link to='/login'>
-                    Login
-                </Link>
-            </p>
+
         </div>
     );
 };

@@ -11,23 +11,13 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
 
-    const fetchCartItems = async () => {
-        try {
-            const res = await api.get('/cart');
-            setCartItems(res.data);
-        } catch (error) {
-            console.error("Error fetching cart items:", error);
-            setCartItems([]);
-        }
-    };
-
-    const login = async (token, userData) => {
+    const login = async (token, user) => {
         localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(user));
+        setUser(user);
         setIsAuthenticated(true);
         await fetchCartItems();
-        if (userData?.role === "SELLER") {
+        if (user?.role === "SELLER") {
             navigate("/admin", { replace: true });
         } else {
             navigate("/home", { replace: true });
@@ -42,6 +32,15 @@ export const AuthProvider = ({ children }) => {
         setCartItems([]);
         navigate("/login", { replace: true });
     };
+    const fetchCartItems = async () => {
+        try {
+            const res = await api.get('/cart');
+            setCartItems(res.data);
+        } catch (error) {
+            console.error("Error fetching cart items:", error);
+            setCartItems([]);
+        }
+    };
 
     const updateCart = async () => {
         await fetchCartItems();
@@ -50,9 +49,9 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkAuth = async () => {
             const token = localStorage.getItem('token');
-            const storedUser = localStorage.getItem('user');
+            const user = localStorage.getItem('user');
 
-            if (!token || !storedUser) {
+            if (!token || !user) {
                 setIsAuthenticated(false);
                 setUser(null);
                 setCartItems([]);
@@ -61,13 +60,11 @@ export const AuthProvider = ({ children }) => {
             }
 
             try {
-
-                const userObject = JSON.parse(storedUser);
+                const userObject = JSON.parse(user);
                 setIsAuthenticated(true);
                 setUser(userObject);
                 await fetchCartItems();
             } catch (error) {
-
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
                 setIsAuthenticated(false);

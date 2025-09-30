@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAuth } from './useAuth';
 import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,10 +14,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         { path: "/cart", label: "Cart" }
     ];
 
-    const adminMenu = [
-        { path: "/admin", label: "Dashboard" },
-        // { path: "/admin/products", label: "Products" },
-        // { path: "/admin/users", label: "Users" },
+    const adminMenuItems = [
+        { path: "/admin", label: "AdminDashboard" },
+        { path: "/admin/users", label: "Users" },
+        { path: "/admin/products", label: "AdminProducts" },
     ];
 
     return (
@@ -43,8 +42,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     {isAdmin && (
                         <>
                             <hr className="sidebar-divider" />
-                            {isOpen && <h4 className="sidebar-title">Admin</h4>}
-                            {adminMenu.map((item) => (
+                            {isOpen && <h4 className="sidebar-title">Admin Menu</h4>}
+                            {adminMenuItems.map((item) => (
                                 <Link
                                     key={item.path}
                                     to={item.path}

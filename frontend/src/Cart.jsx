@@ -5,46 +5,22 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackSharpIcon from '@mui/icons-material/ArrowBackSharp';
 import { useNavigate } from 'react-router-dom';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 const Cart = () => {
-    const { isAuthenticated, cartItems, updateCart } = useAuth();
-    const [items, setItems] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const { isLoading, cartItems, updateCart } = useAuth();
+    const [openAlert, setOpenAlert] = useState(false);
     const navigate = useNavigate();
 
-    const fetchCartItems = async () => {
-        setIsLoading(true);
-        try {
-            const response = await api.get('/cart');
-            setItems(response.data);
-        } catch (error) {
-            console.error("Cannot Fetch cart items:", error);
-            setItems([]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            fetchCartItems();
-        } else {
-            setItems([]);
-            setIsLoading(false);
-        }
-    }, [isAuthenticated]);
-
     const remove = async (id) => {
-        const originalItems = items;
         try {
-            setItems(items.filter(item => item.id !== id));
             await api.post('/cart/delete', { id });
-            alert("Item Removed From Cart");
+            setOpenAlert(true);
             updateCart()
         } catch (error) {
             console.error("Error while removing the Items:", error);
             alert("Error removing item. Please try again.");
-            setItems(originalItems);
         }
     };
 
@@ -52,7 +28,7 @@ const Cart = () => {
         return <div>Loading cart...</div>;
     }
 
-    if (items.length === 0) {
+    if (cartItems.length === 0) {
         return (
             <div>
                 <h2>Cart</h2>
@@ -61,12 +37,18 @@ const Cart = () => {
             </div>
         );
     }
+    const handleCloseAlert = (reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    };
 
     return (
         <>
             <h2>Cart</h2>
             <div className='cartWrapper'>
-                {items.map(item => (
+                {cartItems.map(item => (
                     <div className="cartCard" key={item.id}>
                         <img src={item.product.images[0]} alt={item.product.name} />
                         <div className="itemDetails">
@@ -85,6 +67,11 @@ const Cart = () => {
                         </Button>
                     </div>
                 ))}
+                <Snackbar open={openAlert} autoHideDuration={800} onClose={handleCloseAlert} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+                    <MuiAlert onClose={handleCloseAlert} elevation={6} variant="filled" severity='error'>
+                        Product Removed From Cart
+                    </MuiAlert>
+                </Snackbar>
             </div>
             <div className="cartActions">
                 <Button startIcon={<ArrowBackSharpIcon />} onClick={() => navigate('/home')}>BACK</Button>

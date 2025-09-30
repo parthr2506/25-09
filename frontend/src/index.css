@@ -1,18 +1,22 @@
 :root {
-  margin: 0;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  padding: 20px;
-
+  height: 100%;
+  margin: 0;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+
+img {
+  height: 120px;
+  width: 200px;
 }
 
 a {
@@ -32,8 +36,9 @@ body {
     'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: 20px;
+  /* padding: 20px; */
   background: rgb(0, 0, 0);
+  min-height: 100vh;
 }
 
 h1 {
@@ -64,23 +69,29 @@ button:focus-visible {
 }
 
 .productsWrapper {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 30px;
+  align-items: stretch;
 }
 
 .productCard {
   border: 1px solid #ccc;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
   margin: 10px;
   padding: 16px;
   width: 200px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  justify-content: space-between;
 }
 
-.productCard h3,
-p {
-  margin: 0 0 10px 0
+.productCard img {
+  height: 150px;
+  width: 100%;
+  object-fit: contain;
+  margin: 10px 0;
 }
 
 .navContainer {
@@ -89,8 +100,6 @@ p {
   justify-content: space-between;
   background: rgb(175, 126, 255);
 }
-
-
 
 .card {
   background: white;
@@ -107,9 +116,9 @@ p {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 800px;
+  /* max-width: 800px; */
   margin: 20px auto;
-  padding: 20px;
+  padding: 15px;
   background-color: #1a1a1a;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
@@ -236,6 +245,7 @@ p {
   width: 50px;
   padding: 20px 0;
   align-items: center;
+  background-color: black;
 }
 
 .sidebar-header {
@@ -255,6 +265,13 @@ p {
   padding: 5px;
 }
 
+.sidebar-divider {
+  border: 0;
+  height: 1px;
+  background: #ccc;
+  margin: 10px 0;
+}
+
 .sidebar.closed .sidebar-logo,
 .sidebar.closed .sidebar-nav span,
 .sidebar.closed .sidebar-divider,
@@ -269,7 +286,6 @@ p {
 
 }
 
-
 /* .Add-btn {
   background: #007bff;
   color: white;
@@ -278,3 +294,35 @@ p {
   padding: '8px 12px';
   cursor: pointer;
 } */
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  width: 100%;
+
+}
+
+.form-container form {
+  padding: 40px;
+  background-color: #242424;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 360px;
+}
+
+.description-text {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  text-overflow: ellipsis;
+}
+
+.logo {
+  border-radius: 50%;
+
+}

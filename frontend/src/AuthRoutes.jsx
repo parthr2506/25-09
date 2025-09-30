@@ -9,8 +9,8 @@ import Register from './Register';
 import Products from './Products';
 import Cart from './Cart';
 import AdminDashboard from './AdminDashboard';
-import Unauthorized from './Unauthorized';
-
+import Users from './Users';
+import AdminProducts from './AdminProducts';
 
 const AuthRoutes = () => {
     const { isAuthenticated, user, isLoading } = useAuth();
@@ -38,12 +38,16 @@ const AuthRoutes = () => {
                 <Route element={<SidebarLayout />}>
                     <Route path="/home" element={<Products />} />
                     <Route path="/cart" element={<Cart />} />
-
-                    <Route path="/admin" element={
+                    <Route path="/admin" element={<AdminRoute />}>
+                        <Route index element={<AdminDashboard />} />
+                        <Route path="users" element={<Users />} />
+                        <Route path="products" element={<AdminProducts />} />
+                    </Route>
+                    {/* <Route path="/admin" element={
                         isAdmin
                             ? <AdminDashboard />
                             : <Navigate to="/unauthorized-page" replace />
-                    } />
+                    } /> */}
                 </Route>
             </Route>
 

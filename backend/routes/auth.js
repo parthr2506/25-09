@@ -13,6 +13,14 @@ router.get('/', auth, async (req, res) => {
         role: req.user.role
     })
 })
+
+router.get('/admin/users', auth, async (req, res) => {
+    res.status(200).json({
+        id: req.user.id,
+        email: req.user.email,
+        role: req.user.role
+    })
+})
 router.post('/register', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
