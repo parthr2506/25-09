@@ -5,7 +5,15 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
+        const { query } = req.query;
+        const whereClause = query ? {
+            name: {
+                contains: query,
+                mode: 'insensitive'
+            }
+        } : {}
         const products = await prisma.product.findMany({
+            where: whereClause,
             orderBy: { createdAt: 'desc' }
         });
         res.json(products);

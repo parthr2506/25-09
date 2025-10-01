@@ -12,6 +12,7 @@ import AdminDashboard from './AdminDashboard';
 import Users from './Users';
 import AdminProducts from './AdminProducts';
 import Profile from './Profile';
+import UnauthorizedPage from './UnauthorizedPage';
 
 const AuthRoutes = () => {
     const { isAuthenticated, user, isLoading } = useAuth();
@@ -46,6 +47,7 @@ const AuthRoutes = () => {
                     <Route path="products" element={<AdminProducts />} />
                 </Route>
             </Route>
+            <Route path="*" element={<UnauthorizedPage />}></Route>
         </Routes>
     );
 };

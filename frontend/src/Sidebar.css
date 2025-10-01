@@ -9,7 +9,8 @@
     left: 0;
     height: 100vh;
     padding: 1.5rem 0;
-    background: rgba(163, 108, 250, 0.612);
+    background: rgba(166, 113, 250, 0.75);
+    ;
     color: #e0e6f1;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
     display: flex;
@@ -46,7 +47,7 @@
 .sidebar-toggle {
     background: transparent;
     border: none;
-    color: #abb2bf;
+    color: #e9effc;
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
@@ -70,7 +71,7 @@
     align-items: center;
     padding: 12px 1rem;
     text-decoration: none;
-    color: #abb2bf;
+    color: #f5f8ff;
     border-radius: 6px;
     transition: all 0.3s ease;
     white-space: nowrap;
@@ -81,17 +82,16 @@
 }
 
 .nav-link:hover {
-    background-color: rgba(97, 218, 251, 0.1);
+    background-color: rgba(189, 173, 255, 0.292);
     color: #fff;
 }
 
 .nav-link.active {
-    background-color: rgba(193, 169, 250, 0.869);
+    background-color: rgb(193, 169, 250);
     color: #282c34;
     font-weight: 600;
 }
 
-/* Adjust icon and text spacing in the link */
 .nav-link span {
     display: inline-block;
     margin-left: 1rem;
@@ -106,21 +106,18 @@
     display: none;
 }
 
-.sidebar.closed .sidebar-divider {
-    display: none;
-}
-
+/* 
 .sidebar-divider {
     border: 0;
     height: 1px;
     background: #3a3f4b;
     margin: 1rem 0;
-}
+} */
 
 .sidebar-title {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #818693;
+    color: #e3ebff;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-left: 1rem;

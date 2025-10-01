@@ -30,7 +30,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     {isOpen && <h1 className="sidebar-logo">Menu</h1>}
                 </div>
                 <nav className="sidebar-nav">
-                    {menuItems.map((item) => (
+                    {!isAdmin && menuItems.map((item) => (
                         <Link
                             key={item.path}
                             to={item.path}
@@ -42,8 +42,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     ))}
                     {isAdmin && (
                         <>
-                            <hr className="sidebar-divider" />
-                            {isOpen && <h4 className="sidebar-title">Admin Menu</h4>}
+                            {/* <hr className="sidebar-divider" /> */}
+                            {/* {isOpen && <h4 className="sidebar-title">Admin Menu</h4>} */}
                             {adminMenuItems.map((item) => (
                                 <Link
                                     key={item.path}

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from './useAuth'
 import api from './api';
-import { useNavigate } from 'react-router-dom';
+import { useDebounce } from './useDebounce';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
@@ -11,11 +12,19 @@ const Products = () => {
     const [products, setProducts] = useState([])
     const [isAdding, setIsAdding] = useState(false)
     const [openAlert, setOpenAlert] = useState(false);
+    const location = useLocation()
     const navigate = useNavigate();
+
+    const initialQuery = new URLSearchParams(location.search).get("query") || '';
+    const [searchQuery, setSearchQuery] = useState(initialQuery);
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await api.get("/products");
+                const url = debouncedSearchQuery
+                    ? `/products?query=${encodeURIComponent(debouncedSearchQuery)}`
+                    : '/products';
+                const res = await api.get(url);
                 setProducts(res.data);
 
             } catch (error) {
@@ -25,7 +34,11 @@ const Products = () => {
         }
         fetchProducts();
 
-    }, [])
+    }, [debouncedSearchQuery])
+    useEffect(() => {
+        const urlQuery = new URLSearchParams(location.search).get("query") || '';
+        setSearchQuery(urlQuery);
+    }, [location.search]);
 
     const addToCart = async (productId) => {
         if (!isAuthenticated) {
