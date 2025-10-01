@@ -1,4 +1,7 @@
+import { useAuth } from "./useAuth";
+
 const ProductCard = ({ p, onAdd, isAdding }) => {
+    const { login } = useAuth()
     return (
         <div className="productCard">
             <h3>{p.name}</h3>

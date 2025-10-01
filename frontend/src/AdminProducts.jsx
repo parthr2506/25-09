@@ -53,15 +53,15 @@ const AdminProducts = () => {
     return (
         <div>
             <section>
-                <h3>Products</h3>
+                <h3> Manage Products</h3>
                 {products.map(product => (
-                    <div key={product.id} style={{ border: '1px solid #ddd', padding: 8, margin: 8 }}>
+                    <div className='admin-products-list' key={product.id}>
                         <div>{product.name}</div>
                         <div> Rs:{product.price}</div>
                         <div>Qty:{product.stock}</div>
-                        <button style={{ margin: "10px" }} onClick={() => updateProduct(product.id, product.stock - 1)}>-</button>
-                        <button style={{ margin: "10px" }} onClick={() => updateProduct(product.id, product.stock + 1)}>+</button>
-                        <button style={{ margin: "10px" }} onClick={() => deleteProduct(product.id)}>Delete</button>
+                        <button className='admin-products-btn' onClick={() => updateProduct(product.id, product.stock - 1)}>-</button>
+                        <button className='admin-products-btn' onClick={() => updateProduct(product.id, product.stock + 1)}>+</button>
+                        <button className='admin-products-btn' onClick={() => deleteProduct(product.id)}>Delete</button>
                     </div>
                 ))}
             </section>

@@ -1,23 +1,23 @@
 import { useAuth } from './useAuth';
 import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faTimes, faHome, faShoppingCart, faUsers, faCube, faGauge } from '@fortawesome/free-solid-svg-icons';
+import "./Sidebar.css"
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
-    const role = localStorage.getItem("role");
     const { user } = useAuth();
     const isAdmin = user?.role === "SELLER";
 
     const menuItems = [
-        { path: "/home", label: "Home" },
-        { path: "/cart", label: "Cart" }
+        { path: "/home", label: "Home", icon: faHome },
+        { path: "/cart", label: "Cart", icon: faShoppingCart }
     ];
 
     const adminMenuItems = [
-        { path: "/admin", label: "AdminDashboard" },
-        { path: "/admin/users", label: "Users" },
-        { path: "/admin/products", label: "AdminProducts" },
+        { path: "/admin", label: "Dashboard", icon: faGauge },
+        { path: "/admin/users", label: "Users", icon: faUsers },
+        { path: "/admin/products", label: "Products", icon: faCube },
     ];
 
     return (
@@ -36,6 +36,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                             to={item.path}
                             className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
                         >
+                            <FontAwesomeIcon icon={item.icon} />
                             {isOpen && <span>{item.label}</span>}
                         </Link>
                     ))}
@@ -49,6 +50,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                                     to={item.path}
                                     className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
                                 >
+                                    <FontAwesomeIcon icon={item.icon} />
                                     {isOpen && <span>{item.label}</span>}
                                 </Link>
                             ))}

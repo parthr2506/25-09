@@ -14,7 +14,7 @@ const AppContent = () => {
 
   return (
     <>
-      {isAuthenticated && <Navbar />}
+      <Navbar />
       <AuthRoutes />
     </>
   );

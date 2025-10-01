@@ -11,6 +11,7 @@ import Cart from './Cart';
 import AdminDashboard from './AdminDashboard';
 import Users from './Users';
 import AdminProducts from './AdminProducts';
+import Profile from './Profile';
 
 const AuthRoutes = () => {
     const { isAuthenticated, user, isLoading } = useAuth();
@@ -26,7 +27,7 @@ const AuthRoutes = () => {
             <Route path="/" element={
                 isAuthenticated
                     ? (isAdmin ? <Navigate to="/admin" replace /> : <Navigate to="/home" replace />)
-                    : <Navigate to="/login" replace />
+                    : <Navigate to="/home" replace />
             } />
 
             <Route element={<PublicRoute />}>
@@ -34,25 +35,17 @@ const AuthRoutes = () => {
                 <Route path="/register" element={<Register />} />
             </Route>
 
-            <Route element={<ProtectedRoute />}>
-                <Route element={<SidebarLayout />}>
-                    <Route path="/home" element={<Products />} />
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/admin" element={<AdminRoute />}>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path="users" element={<Users />} />
-                        <Route path="products" element={<AdminProducts />} />
-                    </Route>
-                    {/* <Route path="/admin" element={
-                        isAdmin
-                            ? <AdminDashboard />
-                            : <Navigate to="/unauthorized-page" replace />
-                    } /> */}
+            <Route element={<SidebarLayout />}>
+                <Route path="/home" element={<Products />} />
+                <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+
+                <Route path="/admin" element={<AdminRoute />}>
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="users" element={<Users />} />
+                    <Route path="products" element={<AdminProducts />} />
                 </Route>
             </Route>
-
-            {/* <Route path="/unauthorized-page" element={<Unauthorized />} /> */}
-            {/* <Route path="*" element={<div>Page not found </div>} /> */}
         </Routes>
     );
 };

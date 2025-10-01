@@ -2,12 +2,16 @@ import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Badge, { badgeClasses } from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'; // Import the new icon
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './useAuth';
 
 const Navbar = () => {
     const navigate = useNavigate();
     const { isAuthenticated, cartItems, logout, user } = useAuth();
+    const isAdmin = user?.role === "SELLER";
 
     const CartBadge = styled(Badge)`
       & .${badgeClasses.badge} {
@@ -19,23 +23,41 @@ const Navbar = () => {
     return (
         <span className="navContainer">
             <span className='logo'>Stop & Shop</span>
+            {/* <button className="nav-button" onClick={() => navigate("/admin/products")}>Products</button>
+            <button className="nav-button" onClick={() => navigate("/admin/users")}>Users</button> */}
             <div>
                 {isAuthenticated ? (
-                    <div><p style={{ color: "black" }}>Welcome  {user.email}
-                        <button style={{ margin: "10px" }} onClick={logout}>Logout</button>
-                        <IconButton onClick={() => navigate("/cart")}>
-                            <ShoppingCartIcon fontSize="small" />
-                            <CartBadge style={{ margin: "8px" }} badgeContent={cartItems.length} color="primary" overlap="circular" />
-                        </IconButton>
-                    </p>
+                    isAdmin ? (
+                        <div className="nav-end-content">
+                            <button className="nav-button" onClick={() => navigate("/admin/products")}>Products</button>
+                            <button className="nav-button" onClick={() => navigate("/admin/users")}>Users</button>
+                            <IconButton onClick={() => navigate("/admin")}>
+                                <AddCircleOutlineOutlinedIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton onClick={logout}>
+                                <LogoutOutlinedIcon fontSize="small" />
+                            </IconButton>
+                        </div>
+                    ) : (
+                        <div className="nav-end-content">
+                            <IconButton onClick={() => navigate("/profile")}>
+                                <AccountCircleOutlinedIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton onClick={() => navigate("/cart")}>
+                                <ShoppingCartIcon fontSize="small" />
+                                <CartBadge badgeContent={cartItems.length} color="primary" overlap="circular" />
+                            </IconButton>
+                            <IconButton onClick={logout}>
+                                <LogoutOutlinedIcon fontSize="small" />
+                            </IconButton>
+                        </div>
+                    )
+                ) : (
+                    <div className="nav-end-content">
+                        <button className="nav-button" onClick={() => navigate("/login")}>Login</button>
+                        <button className="nav-button" onClick={() => navigate("/register")}>Register</button>
                     </div>
-                ) :
-                    <div>
-                        <button style={{ margin: "10px" }} onClick={() => navigate("/login")}>Login</button>
-                        <button style={{ margin: "10px" }} onClick={() => navigate("/register")}>Register</button>
-                    </div>
-                }
-
+                )}
             </div>
         </span>
     );

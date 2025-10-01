@@ -10,9 +10,6 @@ const AdminRoute = () => {
 
     const isAdmin = user?.role === "SELLER";
 
-    // if (!isAuthenticated) {
-    //     return <Navigate to="/login" replace />;
-    // }
     if (!isAdmin) {
         return <Navigate to="/login" replace />;
     }

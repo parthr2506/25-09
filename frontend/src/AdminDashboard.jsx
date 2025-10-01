@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from './useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import api from './api';
 
 const AdminDashboard = () => {
-    const { user } = useAuth();
-    const navigate = useNavigate();
     const [newProductForm, setNewProductForm] = useState({
         name: '',
         price: '',
@@ -43,7 +39,7 @@ const AdminDashboard = () => {
             <div className='form-container'>
 
                 <form>
-                    <h3>Create Product</h3>
+                    <h3>Add a new Product to Stock</h3>
                     <label htmlFor="name">Product Name:</label>
                     <br />
                     <input
