@@ -1,74 +1,70 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from './useAuth';
-import { useNavigate } from 'react-router-dom';
 import api from './api';
+import { Typography, Form, Input, Button, message, Select } from 'antd';
+
+const { Title } = Typography;
+const { Option } = Select;
 
 const Users = () => {
-    const { isAuthenticated, user, logout, isLoading } = useAuth();
-    const navigate = useNavigate();
-    const [users, setUsers] = useState([]);
-    const fetchUsers = async () => {
-        try {
-            const userRes = await api.get('/users')
-            setUsers(userRes.data);
-        } catch (err) {
-            console.error('Error fetching data:', err);
-        }
+    const [form] = Form.useForm();
 
-    }
-    useEffect(() => {
-        if (!isLoading) {
-            if (!isAuthenticated || user?.role !== 'SELLER') {
-                navigate('/unauthorized-page', { replace: true });
-            } else {
-                fetchUsers();
-            }
-        }
-    }, [isAuthenticated, isLoading, user, navigate]);
-
-    const assignRole = async (userId, currentRole) => {
-        const newRole = currentRole === 'USER' ? 'SELLER' : 'USER';
+    const onFinish = async (values) => {
         try {
-            await api.post('/users/assign-role', { userId, role: newRole });
-            alert(`User role changed to ${newRole}`);
-            setUsers(users.map((u) => (u.id === userId ? { ...u, role: newRole } : u)));
-            if (user.id === userId) {
-                logout();
-            }
+            await api.post('/users/add', {
+                email: values.email,
+                role: values.role,
+                password: values.password,
+            });
+            message.success('User added successfully!');
+            form.resetFields();
         } catch (err) {
-            console.error('Failed to change role:', err);
-            alert('Failed to change role');
+            console.error('Error adding user:', err);
+            message.error(err.response?.data?.error || 'Failed to add user. Please try again.');
         }
     };
 
-    const deleteUser = async (id) => {
-        if (window.confirm('Are you sure you want to delete this user?')) {
-            try {
-                await api.delete(`/users/${id}`);
-                alert('User deleted!');
-                setUsers(users.filter((u) => u.id !== id));
-            } catch (err) {
-                console.error('Error while deleting user:', err);
-                alert('Failed to delete user');
-            }
-        }
-    };
     return (
-        <div>
-            <section>
-                <h3>Users</h3>
-                {users.map(u => (
-                    <div key={u.id} style={{ border: '1px solid #ddd', padding: 8, margin: 8 }}>
-                        <div>{u.email}</div>
-                        <div>{u.role}</div>
-                        <button style={{ margin: "10px" }} onClick={() => assignRole(u.id, u.role)}>Change Role</button>
-                        <button style={{ margin: "10px" }} onClick={() => deleteUser(u.id)}>Delete User</button>
-                    </div>
-                ))}
-            </section>
-
+        <div className='form-container'>
+            <Title level={2}>Add a new User</Title>
+            <Form
+                form={form}
+                layout="vertical"
+                onFinish={onFinish}
+            >
+                <Form.Item
+                    label="Email"
+                    name="email"
+                    rules={[
+                        { required: true, message: 'Please input the email!' },
+                        { type: 'email', message: 'The input is not a valid email!' }
+                    ]}
+                >
+                    <Input placeholder="Enter email" />
+                </Form.Item>
+                <Form.Item
+                    label="Password"
+                    name="password"
+                    rules={[{ required: true, message: 'Please input the password!' }]}
+                >
+                    <Input.Password placeholder="Enter password" />
+                </Form.Item>
+                <Form.Item
+                    label="Role"
+                    name="role"
+                    rules={[{ required: true, message: 'Please select a role!' }]}
+                >
+                    <Select placeholder="Select a role">
+                        <Option value="USER">User</Option>
+                        <Option value="SELLER">Seller</Option>
+                    </Select>
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Add User
+                    </Button>
+                </Form.Item>
+            </Form>
         </div>
-    )
-}
+    );
+};
 
-export default Users
+export default Users;

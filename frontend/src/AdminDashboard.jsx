@@ -1,89 +1,71 @@
-import { useState } from 'react';
 import api from './api';
+import { Form, Input, InputNumber, Button, message } from 'antd';
 
 const AdminDashboard = () => {
-    const [newProductForm, setNewProductForm] = useState({
-        name: '',
-        price: '',
-        description: '',
-        stock: ''
-    });
+    const [form] = Form.useForm();
 
-    const handleProductFormChange = (e) => {
-        setNewProductForm({ ...newProductForm, [e.target.name]: e.target.value });
-    };
-
-    const addProduct = async () => {
-        if (!newProductForm.name || !newProductForm.price || !newProductForm.description) {
-            alert('Please provide all fields');
-            return;
-        }
+    const onFinish = async (values) => {
         try {
             await api.post('/products', {
-                name: newProductForm.name,
-                description: newProductForm.description,
-                price: Number(newProductForm.price),
-                stock: Number(newProductForm.stock),
+                name: values.name,
+                description: values.description,
+                price: Number(values.price),
+                stock: Number(values.stock),
                 images: [],
             });
-            alert('Product added successfully!');
-            setNewProductForm({ name: '', price: '', description: '' });
+            message.success('Product added successfully');
+            form.resetFields();
         } catch (err) {
             console.error('Error adding product:', err);
-            alert('Failed to add product. Please try again.');
+            message.error(err.response?.data?.error || 'Failed to add product try again.');
         }
     };
-    return (
-        <div>
-            <h2>Admin Dashboard</h2>
-            <div className='form-container'>
 
-                <form>
-                    <h3>Add a new Product to Stock</h3>
-                    <label htmlFor="name">Product Name:</label>
-                    <br />
-                    <input
+    return (
+        <div className='form-container-wrapper'>
+            <div className='form-container-content'>
+                <h3>Add a new Product to Stock</h3>
+                <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={onFinish}
+                >
+                    <Form.Item
+                        label="Product Name"
                         name="name"
-                        id="name"
-                        placeholder="enter product name"
-                        value={newProductForm.name}
-                        onChange={handleProductFormChange}
-                    />
-                    <br /><br />
-                    <label htmlFor="price">Price:</label>
-                    <br />
-                    <input
+                        rules={[{ required: true, message: 'Please enter the product name!' }]}
+                    >
+                        <Input placeholder="Enter product name" />
+                    </Form.Item>
+                    <Form.Item
+                        label="Price"
                         name="price"
-                        id="price"
-                        placeholder="enter price"
-                        value={newProductForm.price}
-                        onChange={handleProductFormChange}
-                    />
-                    <br /><br />
-                    <label htmlFor="description">Description:</label>
-                    <br />
-                    <input
+                        rules={[{ required: true, message: 'Please enter the price!' }]}
+                    >
+                        <InputNumber min={0} style={{ width: '100%' }} placeholder="Enter price" />
+                    </Form.Item>
+                    <Form.Item
+                        label="Description"
                         name="description"
-                        id="description"
-                        placeholder="enter product description"
-                        value={newProductForm.description}
-                        onChange={handleProductFormChange}
-                    />
-                    <br /><br />
-                    <label htmlFor="stock">Stock:</label>
-                    <br />
-                    <input
+                        rules={[{ required: true, message: 'Please enter the product description' }]}
+                    >
+                        <Input.TextArea placeholder="Enter product description" />
+                    </Form.Item>
+                    <Form.Item
+                        label="Stock"
                         name="stock"
-                        id="stock"
-                        placeholder="enter quantity"
-                        value={newProductForm.stock}
-                        onChange={handleProductFormChange}
-                    />
-                    <br /><br />
-                    <button className="btn" onClick={addProduct}>Add</button>
-                </form>
+                        rules={[{ required: true, message: 'Please enter the stock quantity!' }]}
+                    >
+                        <InputNumber style={{ width: "100%" }} placeholder="Enter quantity" />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Add
+                        </Button>
+                    </Form.Item>
+                </Form>
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -1,17 +1,14 @@
-import { useState, useEffect } from "react";
-import api from "./api";
+import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "./useAuth";
+import { Form, Input, Button, message } from 'antd';
+import { MailOutlined, LockOutlined } from '@ant-design/icons';
+import api from "./api";
 
 const Register = () => {
     const navigate = useNavigate();
-    const [message, setMessage] = useState("")
     const { isAuthenticated } = useAuth();
-
-    const [formData, setFormData] = useState({
-        email: '',
-        password: ''
-    });
+    const [form] = Form.useForm();
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -19,55 +16,73 @@ const Register = () => {
         }
     }, [isAuthenticated, navigate]);
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const onFinish = async (values) => {
         try {
-            await api.post('auth/register', formData);
-            setMessage("SignUp Successefull Redirecting....")
-            setFormData({ name: '', email: '', password: '' });
+            await api.post('auth/register', values);
+            message.success("Signup successful! Redirecting to login...");
+            form.resetFields();
             navigate("/login");
-
         } catch (error) {
             console.error('Error:', error);
-            setMessage("Signup Failed Try Again")
+            message.error(error.response?.data?.error || "Signup failed. Please try again.");
         }
     };
 
     if (isAuthenticated === null) {
         return <div>Loading...</div>;
     }
+
     return (
-        <div className="form-container">
-            <form onSubmit={handleSubmit}>
-                <h2>SignUp</h2>
-                <label htmlFor="email">Email:</label>
-                <br />
-                <input type="email" name="email" id="email" placeholder="email" value={formData.email} onChange={handleChange} required />
-                <br /><br />
-
-                <label htmlFor="password">Password:</label>
-                <br />
-                <input type="password" name="password" id="password" placeholder="password" value={formData.password} onChange={handleChange} required />
-                <br /><br />
-
-                <button type="submit">Submit</button>
-                {message && <p>{message}</p>}
-                <p>Already a user
-                    <br></br>
-                    <Link to='/login'>
-                        Login
-                    </Link>
-                </p>
-            </form>
-
+        <div className="form-container-wrapper">
+            <div className="form-container-content">
+                <h3>Sign Up</h3>
+                <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={onFinish}
+                >
+                    <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[
+                            { required: true, message: 'Please input your Email!' },
+                            { type: 'email', message: 'The input is not a valid email!' }
+                        ]}
+                    >
+                        <Input
+                            prefix={<MailOutlined />}
+                            placeholder="Enter your email"
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[
+                            { required: true, message: 'Please input your Password!' },
+                            { min: 6, message: 'Password must be at least 6 characters long!' }
+                        ]}
+                    >
+                        <Input.Password
+                            prefix={<LockOutlined />}
+                            placeholder="Enter your password"
+                        />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" >
+                            Sign Up
+                        </Button>
+                    </Form.Item>
+                    <div style={{ textAlign: 'center', color: 'white' }}>
+                        Already Signed In?
+                        <br />
+                        <Link to='/login'>
+                            Login
+                        </Link>
+                    </div>
+                </Form>
+            </div>
         </div>
     );
 };
 
 export default Register;
-
-

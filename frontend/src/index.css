@@ -63,10 +63,11 @@ button:hover {
   background-color: rgb(151, 8, 184);
 }
 
+/* 
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
+} */
 
 .productsWrapper {
   display: flex;
@@ -87,11 +88,17 @@ button:focus-visible {
   justify-content: space-between;
 }
 
+
 .productCard img {
   height: 150px;
   width: 100%;
   object-fit: contain;
   margin: 10px 0;
+}
+
+.productsWrapper .productCard:hover {
+  background-color: rgba(145, 43, 246, 0.54);
+  /* border: 2px solid rgb(91, 41, 216); */
 }
 
 .nav-end-content .MuiIconButton-root {
@@ -303,6 +310,7 @@ button:hover {
   width: 360px;
 }
 
+
 .description-text {
   overflow: hidden;
   display: -webkit-box;
@@ -310,6 +318,29 @@ button:hover {
   -webkit-line-clamp: 3;
   line-clamp: 3;
   text-overflow: ellipsis;
+}
+
+.form-container-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  width: 100%;
+  color: #fff;
+}
+
+.form-container-wrapper .ant-form {
+  padding: 40px;
+  background-color: #242424;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 360px;
+
+}
+
+.form-container-wrapper .ant-form-item-label>label {
+  color: white;
 }
 
 .admin-products-list {
@@ -349,4 +380,21 @@ button:hover {
   outline: none;
   box-shadow: 0 0 0 2px #646cff;
 
+}
+
+.admin-products-table .ant-pagination .ant-pagination-item:not(.ant-pagination-item-active):hover {
+  background-color: rgba(255, 249, 249, 0.188);
+  color: white;
+}
+
+.admin-products-table .ant-pagination .ant-pagination-item-active {
+  background-color: #f5f5f5;
+  border-color: #1890ff;
+  color: black;
+}
+
+.admin-products-table .ant-pagination-item:hover a {
+  color: white;
+  background-color: rgba(232, 100, 255, 0.572);
+  border-radius: 6px;
 }

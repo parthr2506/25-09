@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
         } : {}
         const products = await prisma.product.findMany({
             where: whereClause,
-            orderBy: { createdAt: 'desc' }
+            // orderBy: { createdAt: 'desc' }
         });
         res.json(products);
     } catch (error) {
@@ -47,7 +47,6 @@ router.post('/', auth, requireRole('SELLER'), async (req, res) => {
         res.status(500).json({ error: 'Failed to create product' });
     }
 });
-
 router.delete('/:id', auth, requireRole('SELLER'), async (req, res) => {
     const { id } = req.params;
     try {
@@ -61,6 +60,10 @@ router.delete('/:id', auth, requireRole('SELLER'), async (req, res) => {
             return res.status(403).json({ error: 'Not Allowed' });
         }
 
+        await prisma.cartItem.deleteMany({
+            where: { productId: id }
+        });
+
         await prisma.product.delete({ where: { id } });
         res.json({ message: `Product with ID ${id} deleted successfully.` });
     } catch (error) {
@@ -71,6 +74,7 @@ router.delete('/:id', auth, requireRole('SELLER'), async (req, res) => {
         res.status(500).json({ error: 'Cannot delete product' });
     }
 });
+
 router.put('/:id/stock', auth, async (req, res) => {
     const { id } = req.params;
     const { stock } = req.body

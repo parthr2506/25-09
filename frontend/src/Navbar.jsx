@@ -49,26 +49,29 @@ const Navbar = () => {
     return (
         <span className="navContainer">
             <span className='logo'>Stop & Shop</span>
-            <div className="search-container">
-                <form onSubmit={handleSearch} className="search-form">
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        className="search-input"
-                        value={searchInput}
-                        onChange={handleChange}
-                    />
-                </form>
-            </div>
+            {isAuthenticated && !isAdmin && (
+                <div className="search-container">
+                    <form onSubmit={handleSearch} className="search-form">
+                        <input
+                            type="text"
+                            placeholder="Search..."
+                            className="search-input"
+                            value={searchInput}
+                            onChange={handleChange}
+                        />
+                    </form>
+                </div>
+            )}
+
             <div>
                 {isAuthenticated ? (
                     isAdmin ? (
                         <div className="nav-end-content">
                             <button className="nav-button" onClick={() => navigate("/admin/products")}>Products</button>
                             <button className="nav-button" onClick={() => navigate("/admin/users")}>Users</button>
-                            <IconButton onClick={() => navigate("/admin")}>
+                            {/* <IconButton onClick={() => navigate("/admin")}>
                                 <FontAwesomeIcon icon={faPlusCircle} />
-                            </IconButton>
+                            </IconButton> */}
                             <IconButton onClick={logout}>
                                 <FontAwesomeIcon icon={faSignOutAlt} />
                             </IconButton>
