@@ -1,9 +1,14 @@
 import api from './api';
+import { useState } from 'react';
 import { Form, Input, Button, message, Select } from 'antd';
 const { Option } = Select;
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 const AddUsers = () => {
     const [form] = Form.useForm();
+    const [openAlert, setOpenAlert] = useState(false);
+    const [messageApi, contextHolder] = message.useMessage();
 
     const onFinish = async (values) => {
         try {
@@ -12,18 +17,29 @@ const AddUsers = () => {
                 role: values.role,
                 password: values.password,
             });
-            message.success('User added successfully');
+            messageApi.success('User added successfully');
+            setOpenAlert(true);
             form.resetFields();
         } catch (err) {
             console.error('Error adding user:', err);
-            message.error(err.response?.data?.error || 'Failed to add user try again.');
+            messageApi.error(err.response?.data?.error || 'Failed to add user try again.');
         }
+        finally {
+            setTimeout(() => setOpenAlert(false), 3000);
+        }
+    };
+    const handleCloseAlert = (reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
     };
 
     return (
         <div className="form-container-wrapper">
             <div className="form-container-content">
-                <h3>Add a new User</h3>
+                <h2>Add a new User</h2>
+                {contextHolder}
                 <Form
                     form={form}
                     layout="vertical"
@@ -62,6 +78,17 @@ const AddUsers = () => {
                         </Button>
                     </Form.Item>
                 </Form>
+
+                <Snackbar
+                    open={openAlert}
+                    autoHideDuration={2000}
+                    onClose={handleCloseAlert}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                >
+                    <MuiAlert onClose={handleCloseAlert} elevation={6} variant="filled" severity="success">
+                        New User Added Successfully
+                    </MuiAlert>
+                </Snackbar>
             </div>
         </div>
     );

@@ -8,6 +8,8 @@ import api from "./api";
 const Login = () => {
     const { isAuthenticated, login } = useAuth();
     const navigate = useNavigate();
+    const [messageApi, contextHolder] = message.useMessage();
+
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -21,10 +23,10 @@ const Login = () => {
             const res = await api.post("auth/login", values);
             const { token, user } = res.data;
             login(token, user);
-            message.success("Login Successful Redirecting...");
+            messageApi.success("Login Successful Redirecting...");
         } catch (err) {
             console.error("Login failed:", err);
-            message.error(err.response?.data?.error || "Invalid credentials try again");
+            messageApi.error(err.response?.data?.error || "Invalid credentials try again");
         }
     };
 
@@ -35,6 +37,7 @@ const Login = () => {
     return (
         <div className="form-container-wrapper">
             <div className="form-container-content">
+                {contextHolder}
                 <h3>Login</h3>
                 <Form
                     form={form}

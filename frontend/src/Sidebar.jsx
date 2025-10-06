@@ -16,8 +16,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
     const adminMenuItems = [
         { path: "/admin", label: "Dashboard", icon: faGauge },
-        { path: "/admin/users", label: "Users", icon: faUsers },
-        { path: "/admin/products", label: "Products", icon: faCube },
+        { path: "/admin/users", label: "Manage Users", icon: faUsers },
+        { path: "/admin/products", label: "Manage Products", icon: faCube },
     ];
 
     return (

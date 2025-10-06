@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Table, Space, Input, Button, Popconfirm, message, Tag } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import api from './api';
+
 import { useDebounce } from './useDebounce';
 
 const AdminUsers = () => {
     const { isAuthenticated, user, logout, isLoading } = useAuth();
+    const [messageApi, contextHolder] = message.useMessage()
     const navigate = useNavigate();
     const { Search } = Input;
     const [originalUsers, setOriginalUsers] = useState([]);
@@ -50,7 +52,7 @@ const AdminUsers = () => {
         const newRole = currentRole === 'USER' ? 'SELLER' : 'USER';
         try {
             await api.post('/users/assign-role', { userId, role: newRole });
-            message.success(`User role changed to ${newRole}`);
+            messageApi.success(`User role changed to ${newRole}`);
 
             const updatedUsers = originalUsers.map((u) => (u.id === userId ? { ...u, role: newRole } : u));
             setOriginalUsers(updatedUsers);
@@ -63,14 +65,14 @@ const AdminUsers = () => {
             }
         } catch (err) {
             console.error('Failed to change role:', err);
-            message.error('Failed to change role');
+            messageApi.error('Failed to change role');
         }
     };
 
     const deleteUser = async (id) => {
         try {
             await api.delete(`/users/${id}`);
-            message.success('User deleted successfully!');
+            messageApi.success('User deleted successfully!');
 
             if (user && user.id === id) {
                 logout();
@@ -83,7 +85,7 @@ const AdminUsers = () => {
             ));
         } catch (err) {
             console.error('Error while deleting user:', err);
-            message.error('Failed to delete user');
+            messageApi.error('Failed to delete user');
         }
     };
 
@@ -133,6 +135,7 @@ const AdminUsers = () => {
 
     return (
         <div>
+            {contextHolder}
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
                 <Search
                     placeholder="Search Here..."
@@ -140,7 +143,7 @@ const AdminUsers = () => {
                     value={searchInput}
                     style={{ width: 300 }}
                 />
-                <Button type="primary" onClick={() => navigate("/admin/users/add")}>
+                <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/admin/users/add")}>
                     Add New User
                 </Button>
             </div>

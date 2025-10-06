@@ -8,6 +8,7 @@ import api from "./api";
 const Register = () => {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
+    const [messageApi, contextHolder] = message.useMessage()
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -19,12 +20,12 @@ const Register = () => {
     const onFinish = async (values) => {
         try {
             await api.post('auth/register', values);
-            message.success("Signup successful! Redirecting to login...");
+            messageApi.success("Signup successful! Redirecting to login...");
             form.resetFields();
             navigate("/login");
         } catch (error) {
             console.error('Error:', error);
-            message.error(error.response?.data?.error || "Signup failed. Please try again.");
+            messageApi.error(error.response?.data?.error || "Signup failed. Please try again.");
         }
     };
 
@@ -35,6 +36,7 @@ const Register = () => {
     return (
         <div className="form-container-wrapper">
             <div className="form-container-content">
+                {contextHolder}
                 <h3>Sign Up</h3>
                 <Form
                     form={form}

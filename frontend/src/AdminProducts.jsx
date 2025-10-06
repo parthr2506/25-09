@@ -13,6 +13,7 @@ const AdminProducts = () => {
     const [products, setProducts] = useState([]);
     const [originalProducts, setOriginalProducts] = useState([]);
     const [searchInput, setSearchInput] = useState('');
+    const [messageApi, contextHolder] = message.useMessage();
 
     const debouncedSearchTerm = useDebounce(searchInput, 300);
 
@@ -51,10 +52,12 @@ const AdminProducts = () => {
             await api.delete(`/products/${id}`);
             // alert('Product deleted!');
             setProducts(products.filter((p) => p.id !== id));
-            message.success("Product Deleted Successfully")
+            messageApi.success("Product Deleted Successfully");
         } catch (err) {
             console.error('Failed to delete product:', err);
             // alert('Failed to delete product');
+            messageApi.error("Cannot delete product error occured ");
+
         }
     }
     // };
@@ -66,9 +69,7 @@ const AdminProducts = () => {
         } catch (error) {
             console.log("cannot update stock");
             alert("stock update failed")
-
         }
-
     }
     const columns = [
         {
@@ -111,7 +112,6 @@ const AdminProducts = () => {
                     >
                         <Button danger icon={<DeleteOutlined />}>Delete</Button>
                     </Popconfirm>
-
                 </Space>
             )
 
@@ -120,6 +120,7 @@ const AdminProducts = () => {
     ]
     return (
         <div className='admin-products-page'>
+            {contextHolder}
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
                 <Search
                     placeholder="Search Here..."
@@ -127,7 +128,7 @@ const AdminProducts = () => {
                     value={searchInput}
                     style={{ width: 300 }}
                 />
-                <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/admin")}>
+                <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/admin/products/add")}>
                     Add New Product
                 </Button>
             </div>
@@ -139,19 +140,6 @@ const AdminProducts = () => {
                 bordered
                 className="admin-products-table"
             />
-            {/* <section>
-                <h3> Manage Products</h3>
-                {products.map(product => (
-                    <div className='admin-products-list' key={product.id}>
-                        <div>{product.name}</div>
-                        <div> Rs:{product.price}</div>
-                        <div>Qty:{product.stock}</div>
-                        <button className='admin-products-btn' onClick={() => updateProduct(product.id, product.stock - 1)}>-</button>
-                        <button className='admin-products-btn' onClick={() => updateProduct(product.id, product.stock + 1)}>+</button>
-                        <button className='admin-products-btn' onClick={() => deleteProduct(product.id)}>Delete</button>
-                    </div>
-                ))}
-            </section> */}
 
         </div>
     )

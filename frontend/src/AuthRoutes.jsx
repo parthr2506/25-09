@@ -14,6 +14,7 @@ import AdminProducts from './AdminProducts';
 import Profile from './Profile';
 import UnauthorizedPage from './UnauthorizedPage';
 import AdminUsers from './AdminUsers';
+import AddProducts from './AddProducts';
 
 const AuthRoutes = () => {
     const { isAuthenticated, user, isLoading } = useAuth();
@@ -45,6 +46,7 @@ const AuthRoutes = () => {
                 <Route path="/admin" element={<AdminRoute />}>
                     <Route index element={<AdminDashboard />} />
                     <Route path="products" element={<AdminProducts />} />
+                    <Route path="products/add" element={<AddProducts />} />
                     <Route path="users" element={<AdminUsers />} />
                     <Route path="users/add" element={<AddUsers />} />
                 </Route>

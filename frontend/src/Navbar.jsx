@@ -67,11 +67,11 @@ const Navbar = () => {
                 {isAuthenticated ? (
                     isAdmin ? (
                         <div className="nav-end-content">
-                            <button className="nav-button" onClick={() => navigate("/admin/products")}>Products</button>
-                            <button className="nav-button" onClick={() => navigate("/admin/users")}>Users</button>
-                            {/* <IconButton onClick={() => navigate("/admin")}>
-                                <FontAwesomeIcon icon={faPlusCircle} />
-                            </IconButton> */}
+                            {/* <button className="nav-button" onClick={() => navigate("/admin/products")}>Products</button>
+                            <button className="nav-button" onClick={() => navigate("/admin/users")}>Users</button> */}
+                            <IconButton onClick={() => navigate("/profile")}>
+                                <FontAwesomeIcon icon={faUserCircle} />
+                            </IconButton>
                             <IconButton onClick={logout}>
                                 <FontAwesomeIcon icon={faSignOutAlt} />
                             </IconButton>
