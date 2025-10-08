@@ -7,6 +7,7 @@ import ArrowBackSharpIcon from '@mui/icons-material/ArrowBackSharp';
 import { useNavigate } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import PayPalButton from './PayPalButton';
 
 const Cart = () => {
     const { isLoading, cartItems, updateCart } = useAuth();
@@ -48,6 +49,7 @@ const Cart = () => {
         <>
             <h2>Cart</h2>
             <div className='cartWrapper'>
+                {/* <h3>Total: ₹{cartItems.reduce((a, i) => a + i.price * i.quantity, 0)}</h3> */}
                 {cartItems.map(item => (
                     <div className="cartCard" key={item.id}>
                         <img src={item.product.images[0]} alt={item.product.name} />
@@ -66,6 +68,7 @@ const Cart = () => {
                             Remove
                         </Button>
                     </div>
+
                 ))}
                 <Snackbar open={openAlert} autoHideDuration={800} onClose={handleCloseAlert} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
                     <MuiAlert onClose={handleCloseAlert} elevation={6} variant="filled" severity='error'>
@@ -76,6 +79,7 @@ const Cart = () => {
             <div className="cartActions">
                 <Button startIcon={<ArrowBackSharpIcon />} onClick={() => navigate('/home')}>BACK</Button>
             </div>
+            <PayPalButton cartItems={cartItems} />
         </>
     );
 };
