@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import api from './api';
 import { useAuth } from './useAuth';
 import Button from '@mui/material/Button';
@@ -10,7 +10,7 @@ import MuiAlert from '@mui/material/Alert';
 import PayPalButton from './PayPalButton';
 
 const Cart = () => {
-    const { isLoading, cartItems, updateCart } = useAuth();
+    const { isLoading, cartItems, updateCart, user } = useAuth();
     const [openAlert, setOpenAlert] = useState(false);
     const navigate = useNavigate();
 
@@ -20,8 +20,8 @@ const Cart = () => {
             setOpenAlert(true);
             updateCart()
         } catch (error) {
-            console.error("Error while removing the Items:", error);
-            alert("Error removing item. Please try again.");
+            console.error("Error while removing the items:", error);
+            alert("Error removing item try again");
         }
     };
 
@@ -48,11 +48,13 @@ const Cart = () => {
     return (
         <>
             <h2>Cart</h2>
+            <h3>Total Rs:{cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0)}</h3>
             <div className='cartWrapper'>
-                {/* <h3>Total: ₹{cartItems.reduce((a, i) => a + i.price * i.quantity, 0)}</h3> */}
+
                 {cartItems.map(item => (
                     <div className="cartCard" key={item.id}>
                         <img src={item.product.images[0]} alt={item.product.name} />
+
                         <div className="itemDetails">
                             <h5>{item.product.name}</h5>
                             <p>Rs: {item.product.price}</p>
@@ -79,7 +81,13 @@ const Cart = () => {
             <div className="cartActions">
                 <Button startIcon={<ArrowBackSharpIcon />} onClick={() => navigate('/home')}>BACK</Button>
             </div>
-            <PayPalButton cartItems={cartItems} />
+            <PayPalButton
+                clientId={import.meta.env.VITE_PAYPAL_CLIENT_ID}
+                currency="USD"
+                cartItems={cartItems}
+                userId={user.id}
+                onPaymentSuccess={updateCart}
+            />
         </>
     );
 };

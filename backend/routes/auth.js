@@ -5,7 +5,6 @@ const { auth } = require("../middlewares/auth")
 const prisma = require("../prisma/prismaClient");
 const router = express.Router();
 
-
 router.get('/', auth, async (req, res) => {
     res.status(200).json({
         id: req.user.id,

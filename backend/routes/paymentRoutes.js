@@ -1,60 +1,78 @@
 const express = require("express");
 const paypal = require("@paypal/checkout-server-sdk");
 const dotenv = require("dotenv");
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
+const { v4: uuidv4 } = require('uuid');
+const prisma = require("../prisma/prismaClient")
 
 dotenv.config();
 
 const router = express.Router();
-router.use(bodyParser.json());
+router.use(express.json());
 
 let environment = new paypal.core.SandboxEnvironment(
-    process.env.PAYPAL_CLIENT_ID,
-    process.env.PAYPAL_CLIENT_SECRET
+    process.env.VITE_PAYPAL_CLIENT_ID,
+    process.env.VITE_PAYPAL_CLIENT_SECRET
 );
 let client = new paypal.core.PayPalHttpClient(environment);
 
+
 router.post("/create-order", async (req, res) => {
     const { userId, cartItems } = req.body;
-    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    if (!userId || !cartItems || cartItems.length === 0) {
+        return res.status(400).json({ error: "Invalid request data" });
+    }
+
+    let paypalOrder;
+    const temporaryId = uuidv4();
 
     try {
-        // 1. Create a PENDING order in your database
+        let total = cartItems.reduce((sum, item) => {
+            const price = parseFloat(item.product.price);
+            return sum + (price || 0) * (item.quantity || 0);
+        }, 0);
+
+        if (isNaN(total)) {
+            return res.status(400).json({ error: "Could not calculate a total amount" });
+        }
+
+        const orderItemsToCreate = cartItems.map(item => ({
+            product: { connect: { id: item.product.id } },
+            quantity: item.quantity,
+            price: item.product.price,
+        }));
+
+        //create prisma order with a temp transaction id 
         const order = await prisma.order.create({
             data: {
-                userId,
+                user: { connect: { id: userId } },
                 totalAmount: total,
-                items: {
-                    create: cartItems.map(item => ({
-                        productId: item.productId,
-                        quantity: item.quantity,
-                        price: item.price
-                    }))
-                }
-            }
+                paymentStatus: "PENDING",
+                paypalOrderId: temporaryId,
+                items: { create: orderItemsToCreate },
+            },
         });
 
-        // 2. Create the PayPal order
+        //create paypal order
         const request = new paypal.orders.OrdersCreateRequest();
         request.prefer("return=representation");
         request.requestBody({
             intent: "CAPTURE",
             purchase_units: [{
                 amount: { currency_code: "USD", value: total.toFixed(2) },
-                // Optional: Store your internal order ID with PayPal
                 custom_id: order.id,
             }],
         });
-        const paypalOrder = await client.execute(request);
+        paypalOrder = await client.execute(request);
 
-        // 3. Update your database order with the PayPal Order ID
+        //updating the db order with actual paypal order id
         await prisma.order.update({
             where: { id: order.id },
             data: { paypalOrderId: paypalOrder.result.id }
         });
 
         res.json({ id: paypalOrder.result.id });
-
     } catch (err) {
         console.error("PayPal API Error:", err.message);
         res.status(500).json({ error: "Order creation failed." });
@@ -63,36 +81,61 @@ router.post("/create-order", async (req, res) => {
 
 router.post("/capture-order", async (req, res) => {
     const { orderID } = req.body;
-
     try {
-        // 1. Check your database for the order and prevent double payments
-        const order = await prisma.order.findUnique({ where: { paypalOrderId: orderID } });
-        if (!order || order.paymentStatus !== "PENDING") {
-            return res.status(400).json({ error: "Order already captured or does not exist." });
+        const order = await prisma.order.findUnique({
+            where: {
+                paypalOrderId: orderID
+            },
+            include: { items: true }
+        })
+        if (!order) {
+            return res.status(400).json({ error: "Order not found" })
         }
-
-        // 2. Capture the payment with PayPal
+        if (order.paymentStatus !== "PENDING") {
+            return res.status(400).json({ error: "Order is already processed" })
+        }
         const request = new paypal.orders.OrdersCaptureRequest(orderID);
         request.requestBody({});
-        const capture = await client.execute(request);
-        const captureStatus = capture.result.status;
+        const captureRespone = await client.execute(request);
 
-        // 3. Update the database order based on the capture result
-        if (captureStatus === "COMPLETED") {
+        const captureResult = captureRespone.result;
+        const capture = captureResult.purchase_units?.[0]?.payments?.captures?.[0];
+        const payer = captureResult.payer;
+
+        if (capture && capture.status === "COMPLETED") {
             await prisma.order.update({
                 where: { id: order.id },
-                data: { paymentStatus: "COMPLETED" }
+                data: {
+                    paymentStatus: "COMPLETED",
+                    paypalCaptureId: capture.id,
+                    payerEmail: payer?.email_address || null,
+                    payerName: `${payer?.name?.given_name || ""} ${payer?.name?.surname || ""}`,
+                }
+            })
+
+
+            const userCart = await prisma.cart.findFirst({
+                where: { userId: order.userId },
             });
-            // Optional: clear the user's cart
-            // await prisma.cart.delete({ where: { userId: order.userId } });
-        } else {
-            await prisma.order.update({
-                where: { id: order.id },
-                data: { paymentStatus: captureStatus }
-            });
+
+            //using transactions for success(remove cart items on successfull payment)
+            if (userCart) {
+                await prisma.$transaction([
+                    //deleting user's cart 
+                    prisma.cartItem.deleteMany({
+                        where: { cartId: userCart.id },
+                    }),
+                    //deleting the cart's record
+                    prisma.cart.delete({
+                        where: { id: userCart.id },
+                    }),
+                ]);
+            }
+
+            // await prisma.cart.deleteMany({ where: { userId: order.userId } }); 
         }
-
-        res.json({ capture: capture.result });
+        //sending response back to client
+        res.json({ capture: captureResult });
     } catch (err) {
         console.error("PayPal Capture Error:", err.message);
         res.status(500).json({ error: "Capture failed." });
