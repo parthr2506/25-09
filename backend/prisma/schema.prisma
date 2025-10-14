@@ -19,6 +19,7 @@ model User {
   email            String    @unique
   password         String
   role             Role      @default(USER)
+  watchlist        String[]  @db.ObjectId
   assignedProducts Product[]
   cart             Cart[]
   Order            Order[]

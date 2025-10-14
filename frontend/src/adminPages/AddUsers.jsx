@@ -1,4 +1,4 @@
-import api from './api';
+import api from '../api';
 import { useState } from 'react';
 import { Form, Input, Button, message, Select } from 'antd';
 const { Option } = Select;

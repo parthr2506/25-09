@@ -3,18 +3,19 @@ import { useAuth } from './useAuth';
 import PublicRoute from './PublicRoute';
 import ProtectedRoute from './ProtectedRoute';
 import AdminRoute from './AdminRoute';
-import SidebarLayout from './SidebarLayout';
-import Login from './Login';
-import Register from './Register';
-import Products from './Products';
-import Cart from './Cart';
-import AdminDashboard from './AdminDashboard';
-import AddUsers from './AddUsers';
-import AdminProducts from './AdminProducts';
-import Profile from './Profile';
-import UnauthorizedPage from './UnauthorizedPage';
-import AdminUsers from './AdminUsers';
-import AddProducts from './AddProducts';
+import SidebarLayout from './components/SidebarLayout';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Products from './pages/Products';
+import Cart from './pages/Cart';
+import AdminDashboard from './adminPages/AdminDashboard';
+import AddUsers from './adminPages/AddUsers';
+import AdminProducts from './adminPages/AdminProducts';
+import Profile from './pages/Profile';
+import UnauthorizedPage from './pages/UnauthorizedPage';
+import AdminUsers from './adminPages/AdminUsers';
+import AddProducts from './adminPages/AddProducts';
+import Watchlist from './pages/Watchlist';
 
 const AuthRoutes = () => {
     const { isAuthenticated, user, isLoading } = useAuth();
@@ -42,6 +43,7 @@ const AuthRoutes = () => {
                 <Route path="/home" element={<Products />} />
                 <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                <Route path="/watchlist" element={<ProtectedRoute><Watchlist /></ProtectedRoute>} />
 
                 <Route path="/admin" element={<AdminRoute />}>
                     <Route index element={<AdminDashboard />} />

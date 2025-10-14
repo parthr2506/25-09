@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import api from './api';
-import { useAuth } from './useAuth';
+import api from '../api';
+import { useAuth } from '../useAuth';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackSharpIcon from '@mui/icons-material/ArrowBackSharp';
@@ -33,7 +33,7 @@ const Cart = () => {
         return (
             <div>
                 <h2>Cart</h2>
-                <p>Your cart is empty.</p>
+                <p>Your cart is empty</p>
                 <Button startIcon={<ArrowBackSharpIcon />} onClick={() => navigate('/home')}>BACK</Button>
             </div>
         );
@@ -57,8 +57,8 @@ const Cart = () => {
 
                         <div className="itemDetails">
                             <h5>{item.product.name}</h5>
-                            <p>Rs: {item.product.price}</p>
-                            <p>Quantity: {item.quantity}</p>
+                            <p><strong>Rs: </strong>{item.product.price}</p>
+                            <p><strong>Quantity:</strong> {item.quantity}</p>
                         </div>
                         <Button
                             className='remove-btn'
@@ -81,6 +81,7 @@ const Cart = () => {
             <div className="cartActions">
                 <Button startIcon={<ArrowBackSharpIcon />} onClick={() => navigate('/home')}>BACK</Button>
             </div>
+
             <PayPalButton
                 clientId={import.meta.env.VITE_PAYPAL_CLIENT_ID}
                 currency="USD"

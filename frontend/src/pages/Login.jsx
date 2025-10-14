@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../useAuth";
 import { Form, Input, Button, message } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
-import api from "./api";
+import api from "../api";
 
 const Login = () => {
     const { isAuthenticated, login } = useAuth();

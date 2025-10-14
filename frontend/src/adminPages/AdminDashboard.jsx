@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import api from './api';
+import api from '../api';
 import "./Dashboard.css";
 
 const CustomYAxisTick = ({ y, payload }) => {

@@ -1,7 +1,7 @@
-import { useAuth } from './useAuth';
+import { useAuth } from '../useAuth';
 import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faTimes, faHome, faShoppingCart, faUsers, faCube, faGauge } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faTimes, faHome, faShoppingCart, faUsers, faCube, faGauge, faHeart } from '@fortawesome/free-solid-svg-icons';
 import "./Sidebar.css"
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -11,7 +11,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
     const menuItems = [
         { path: "/home", label: "Home", icon: faHome },
-        { path: "/cart", label: "Cart", icon: faShoppingCart }
+        { path: "/cart", label: "Cart", icon: faShoppingCart },
+        { path: "/watchlist", label: "Watchlist", icon: faHeart }
     ];
 
     const adminMenuItems = [

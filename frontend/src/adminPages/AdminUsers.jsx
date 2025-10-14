@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from './useAuth';
+import { useAuth } from '../useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Table, Space, Input, Button, Popconfirm, message, Tag } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import api from './api';
+import api from '../api';
 
-import { useDebounce } from './useDebounce';
+import { useDebounce } from '../useDebounce';
 
 const AdminUsers = () => {
     const { isAuthenticated, user, logout, isLoading } = useAuth();

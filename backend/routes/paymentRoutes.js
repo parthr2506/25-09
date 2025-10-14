@@ -1,7 +1,6 @@
 const express = require("express");
 const paypal = require("@paypal/checkout-server-sdk");
 const dotenv = require("dotenv");
-// const bodyParser = require("body-parser");
 const { v4: uuidv4 } = require('uuid');
 const prisma = require("../prisma/prismaClient")
 
@@ -138,7 +137,7 @@ router.post("/capture-order", async (req, res) => {
         res.json({ capture: captureResult });
     } catch (err) {
         console.error("PayPal Capture Error:", err.message);
-        res.status(500).json({ error: "Capture failed." });
+        res.status(500).json({ error: "Capture failed" });
     }
 });
 

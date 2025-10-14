@@ -5,7 +5,8 @@ const authRoutes = require('./routes/auth');
 const productsRoutes = require('./routes/products');
 const usersRoutes = require('./routes/user');
 const cartRoutes = require('./routes/cart');
-const paymentRoutes = require("./routes/paymentRoutes")
+const paymentRoutes = require('./routes/paymentRoutes')
+const watchlistRoutes = require('./routes/watchlistRoutes')
 
 const app = express();
 
@@ -23,6 +24,8 @@ app.use('/api/products', productsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/payment', paymentRoutes);
+
+app.use('/api/watchlist', watchlistRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log('Listening on Port', PORT));

@@ -2,14 +2,13 @@ import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Badge, { badgeClasses } from '@mui/material/Badge';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './useAuth';
+import { useAuth } from '../useAuth';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faShoppingCart,
     faUserCircle,
     faSignOutAlt,
-    faPlusCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
 
@@ -49,19 +48,18 @@ const Navbar = () => {
     return (
         <span className="navContainer">
             <span className='logo'>Stop & Shop</span>
-            {isAuthenticated && !isAdmin && (
-                <div className="search-container">
-                    <form onSubmit={handleSearch} className="search-form">
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            className="search-input"
-                            value={searchInput}
-                            onChange={handleChange}
-                        />
-                    </form>
-                </div>
-            )}
+
+            <div className="search-container">
+                <form onSubmit={handleSearch} className="search-form">
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        className="search-input"
+                        value={searchInput}
+                        onChange={handleChange}
+                    />
+                </form>
+            </div>
 
             <div>
                 {isAuthenticated ? (

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from './useAuth';
+import { useAuth } from '../useAuth';
 import { useNavigate } from 'react-router-dom';
-import api from './api';
+import api from '../api';
 import { Table, Space, Input, Button, Popconfirm, message, Tag } from "antd"
 import { PlusOutlined, DeleteOutlined, MinusOutlined } from "@ant-design/icons"
-import { useDebounce } from './useDebounce';
+import { useDebounce } from '../useDebounce';
 
 const AdminProducts = () => {
     const { Search } = Input;

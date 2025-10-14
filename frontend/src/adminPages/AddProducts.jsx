@@ -1,4 +1,4 @@
-import api from './api';
+import api from '../api';
 import { Form, Input, InputNumber, Button, message } from 'antd';
 import { useState } from 'react';
 import Snackbar from '@mui/material/Snackbar';
