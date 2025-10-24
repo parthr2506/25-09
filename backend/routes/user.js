@@ -57,6 +57,7 @@ router.post('/assign-role', auth, requireRole('SELLER'), async (req, res) => {
     });
     res.json({ message: "User Role Changed" });
 });
+
 router.delete('/:id', auth, requireRole('SELLER'), async (req, res) => {
     const { id } = req.params;
     try {
